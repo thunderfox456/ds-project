@@ -40,17 +40,9 @@ public class ChatClient {
 		//request to the server to register as client
 		RegisterRequest registerRequest = new RegisterRequest(userId, inetAddress, 4444);
 		registerRequest.toStream(dOut);
-		/*
-		Message response;
-		try {
-			response = Message.parse(dIn);
-			System.out.println(response);
-		} catch (IOException | ReflectiveOperationException e) {
-			e.printStackTrace();
-		}*/
 		
 		//sending Message for Test 1 for user ID correctness
-		//test1(userId, dOut);
+		test1(userId, dOut);
 		//sending Message for Test 2 for out of band message
 		test2(userId, dOut, dIn);
 		
@@ -81,47 +73,33 @@ public class ChatClient {
 			e.printStackTrace();
 			return false;
 		}
-		Message response;
-		//dIn.read(null)
-		/*
-		try {
-			response = Message.parse(dIn);
-			System.out.println(response);
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (ReflectiveOperationException e) {
-			e.printStackTrace();
-		}*/
-		/*
-		try {
-			response = Message.parse(dIn);
-			System.out.println(response);
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (ReflectiveOperationException e) {
-			e.printStackTrace();
-		} catch (IllegalStateException e) {
-			System.out.println(e);
-		}*/
 		
+		Message response;
 		try {
+			//catch all incoming messages
 			while (true) {
 				try {
-				System.out.println("Test");
-				response = Message.parse(dIn);
-				System.out.println(response);
-				if (response.getMessageType().equals(MessageType.REGISTER_RESPONSE))
+					//parse messages incoming from the DataStream
+					response = Message.parse(dIn);
+					//print the message for debug reasons
 					System.out.println(response);
-				if (response.getMessageType().equals(MessageType.CHAT_MESSAGE))
-					response.toStream(dOut);
-				} catch (IllegalStateException e) {
+					//ignore register responses, print for debug reasons
+					if (response.getMessageType().equals(MessageType.REGISTER_RESPONSE))
+						System.out.println(response);
+					//chat messages should be echoed
+					if (response.getMessageType().equals(MessageType.CHAT_MESSAGE))
+						response.toStream(dOut);
+				//unknown message type	
+				} catch (IllegalStateException e) { 
 					System.out.println(e);
 				}
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
+			return false;
 		} catch (ReflectiveOperationException e) {
 			e.printStackTrace();
+			return false;
 		} catch (IllegalStateException e) {
 			System.out.println(e);
 		}
