@@ -44,6 +44,14 @@ public abstract class Message {
 			return id;
 		}
 
+		public InetAddress getUDPAddress() {
+			return address;
+		}
+
+		public int getUDPPort() {
+			return port;
+		}
+
 		@Override
 		public String toString() {
 			return "REGISTER_REQUEST (" + id + ", " + address.getCanonicalHostName() + ":" + port + ")";
